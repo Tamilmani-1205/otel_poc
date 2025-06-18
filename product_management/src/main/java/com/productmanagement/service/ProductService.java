@@ -6,16 +6,13 @@ import com.productmanagement.dto.product.ProductSearchRequest;
 import com.productmanagement.exception.BusinessException;
 import com.productmanagement.exception.ResourceNotFoundException;
 import com.productmanagement.model.Product;
-import com.productmanagement.model.User;
 import com.productmanagement.repository.ProductRepository;
-import com.productmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +24,6 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
     public Page<ProductResponse> getAllProducts(String search, Pageable pageable) {
         Page<Product> products = search != null && !search.isEmpty()
@@ -49,16 +45,10 @@ public class ProductService {
             throw new BusinessException("Product with this name already exists");
         }
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new BusinessException("User not found"));
-
         Product product = new Product();
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
-        product.setCreatedBy(currentUser);
-        product.setUpdatedBy(currentUser);
 
         Product savedProduct = productRepository.save(product);
         return mapToResponse(savedProduct);
@@ -74,14 +64,9 @@ public class ProductService {
             throw new BusinessException("Product with this name already exists");
         }
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new BusinessException("User not found"));
-
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
-        product.setUpdatedBy(currentUser);
 
         Product updatedProduct = productRepository.save(product);
         return mapToResponse(updatedProduct);
@@ -132,14 +117,6 @@ public class ProductService {
         response.setPrice(product.getPrice());
         response.setCreatedAt(product.getCreatedAt());
         response.setUpdatedAt(product.getUpdatedAt());
-        
-        if (product.getCreatedBy() != null) {
-            response.setCreatedBy(product.getCreatedBy().getUsername());
-        }
-        if (product.getUpdatedBy() != null) {
-            response.setUpdatedBy(product.getUpdatedBy().getUsername());
-        }
-        
         return response;
     }
 } 

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.productmanagement.dto.product.ProductSearchRequest;
 import com.productmanagement.dto.product.ProductResponse;
 import com.productmanagement.service.ProductService;
-import com.productmanagement.security.JwtTokenProvider;
-import com.productmanagement.security.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,19 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
@@ -50,7 +36,6 @@ class ProductControllerTest {
     private ProductService productService;
 
     @Test
-    @WithMockUser
     void searchProducts_WithValidRequest_ReturnsOk() throws Exception {
         // Arrange
         ProductSearchRequest searchRequest = new ProductSearchRequest();
@@ -75,7 +60,6 @@ class ProductControllerTest {
     }
 
     @Test
-    @WithMockUser
     void searchProducts_WithInvalidRequest_ReturnsBadRequest() throws Exception {
         // Arrange
         ProductSearchRequest searchRequest = new ProductSearchRequest();

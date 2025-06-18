@@ -4,8 +4,6 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -63,19 +61,6 @@ public class GlobalExceptionHandler {
                 errors,
                 ZonedDateTime.now()
         ), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
-        log.error("Authentication failed: ", ex);
-        String message = ex instanceof BadCredentialsException ? "Invalid username or password" : ex.getMessage();
-        return createErrorResponse(HttpStatus.UNAUTHORIZED, message);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
-        log.error("Unexpected error occurred: ", ex);
-        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
     }
 
     private ResponseEntity<ErrorResponse> createErrorResponse(HttpStatus status, String message) {

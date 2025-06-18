@@ -7,8 +7,20 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['app:8080']
-    scrape_interval: 5s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'product-management-app'
+
+  - job_name: 'user-management-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['user-service:8081']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'user-management-app'
 
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090'] 
+      - targets: ['localhost:9090']
