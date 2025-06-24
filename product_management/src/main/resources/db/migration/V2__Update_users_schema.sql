@@ -1,5 +1,5 @@
 -- Create users table
-CREATE TABLE users (
+CREATE TABLE if not exists users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -43,7 +43,7 @@ BEGIN
 END $$;
 
 -- Create user_roles table if it doesn't exist
-CREATE TABLE IF NOT EXISTS user_roles (
+CREATE TABLE user_roles (
     user_id UUID NOT NULL,
     role VARCHAR(50) NOT NULL,
     PRIMARY KEY (user_id, role),
@@ -98,4 +98,4 @@ WHERE u.username = 'user'
 AND NOT EXISTS (
     SELECT 1 FROM user_roles ur 
     WHERE ur.user_id = u.id AND ur.role = 'USER'
-); 
+);
